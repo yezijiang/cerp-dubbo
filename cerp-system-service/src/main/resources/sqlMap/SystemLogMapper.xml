@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matthew.cerp.dao.SystemLogDao">
+	<resultMap type="TSLog" id="logResultMap">
+	  <result property="operateId" column="OPERATE_ID" />
+	  <result property="staffId" column="STAFF_ID"/>
+	  <result property="loginAccount" column="LOGIN_ACCOUNT"/>
+	  <result property="operateCode" column="OPERATE_CODE"/>
+	  <result property="operateContent" column="OPERATE_CONTENT"/>
+	  <result property="operateDesc" column="OPERATE_DESC"/>
+	  <result property="operateTime" column="OPERATE_TIME"/>
+	  <result property="isSuccess" column="IS_SUCCESS"/>
+	  <result property="executionTime" column="EXECUTION_TIME"/>
+	  <result property="ip" column="IP"/>
+	  <result property="broswer" column="BROSWER"/>
+	  <result property="staffName" column="STAFF_NAME"/>
+	  <result property="loginId" column="LOGIN_ID" />
+	  <result property="operateType" column="OPERATE_TYPE"/>
+	</resultMap>
+	
+	<!-- 新增操作日志 -->
+	<insert id="insertOperateLog" parameterType="TSLog">
+	    INSERT INTO T_SYS_OPERATE_LOG
+	    (STAFF_ID,LOGIN_ACCOUNT,OPERATE_CODE,OPERATE_CONTENT,OPERATE_DESC,OPERATE_TIME,IS_SUCCESS,EXECUTION_TIME,IP,BROSWER,STAFF_NAME)
+	    values 
+	    (#{staffId},#{loginAccount},#{operateCode},#{operateContent},#{operateDesc},NOW(),#{isSuccess},#{executionTime},#{ip},#{broswer},#{staffName})
+	</insert>
+	
+	<!-- 新增登陆日志 -->
+	<insert id="insertLoginLog" parameterType="TSLog">
+	    INSERT INTO T_SYS_LOGIN_LOG
+	    (STAFF_ID,LOGIN_ACCOUNT,OPERATE_TYPE,OPERATE_TIME,IP,BROSWER,STAFF_NAME)
+	    values 
+	    (#{staffId},#{loginAccount},#{operateType},NOW(),#{ip},#{broswer},#{staffName})
+	</insert>
+	
+	<!-- 查询操作日志数据-分页查询 -->
+	<select id="queryOperateLogData" parameterType="java.util.HashMap" resultMap="logResultMap">
+	SELECT 	OPERATE_ID, 
+		STAFF_ID, 
+		LOGIN_ACCOUNT, 
+		OPERATE_CODE,
+		OPERATE_CONTENT, 
+		CONCAT(OPERATE_ID,'#@#@#@',IS_SUCCESS,'#@#@#@',OPERATE_DESC) AS OPERATE_DESC, 
+		DATE_FORMAT(OPERATE_TIME, '%Y-%m-%d %H:%i:%s') AS OPERATE_TIME,
+		IS_SUCCESS,
+		EXECUTION_TIME, 
+		IP, 
+		BROSWER, 
+		STAFF_NAME
+		FROM T_SYS_OPERATE_LOG
+		<where> 
+		    <!-- 操作编码 -->
+	        <if test="operateCode != null and operateCode != ''">     
+	            AND OPERATE_CODE= #{operateCode}     
+	        </if>
+	          <!-- 执行状态 -->
+	        <if test="isSuccess != null and isSuccess != ''">     
+	           AND IS_SUCCESS= #{isSuccess}     
+	        </if>
+	        <!-- 操作时间-开始时间-->  
+	        <if test="startOperateTime != null and startOperateTime != ''">     
+	            <![CDATA[ AND OPERATE_TIME >= #{startOperateTime}]]>     
+	        </if>
+	        <!-- 操作时间-结束时间--> 
+	         <if test="endOperateTime != null and endOperateTime != ''">     
+	             <![CDATA[AND OPERATE_TIME <= #{endOperateTime}]]>    
+	        </if>
+       </where>
+	</select>
+	
+	<!-- 查询登录日志数据-分页查询 -->
+	<select id="queryLoginLogData" parameterType="java.util.HashMap" resultMap="logResultMap">
+	SELECT 	LOGIN_ID, 
+		STAFF_ID, 
+		CONCAT(LOGIN_ACCOUNT,'|',OPERATE_TYPE) AS OPERATE_CONTENT, 
+		LOGIN_ACCOUNT,
+		OPERATE_TYPE, 
+		DATE_FORMAT(OPERATE_TIME, '%Y-%m-%d %H:%i:%s') AS OPERATE_TIME,
+		IP, 
+		BROSWER, 
+		STAFF_NAME
+		FROM T_SYS_LOGIN_LOG
+		<where> 
+		    <!-- 操作类型 -->
+	        <if test="operateType != null and operateType != ''">     
+	            OPERATE_TYPE= #{operateType}     
+	        </if>
+	        <!-- 操作时间-开始时间-->  
+	        <if test="startOperateTime != null and startOperateTime != ''">     
+	            <![CDATA[ AND OPERATE_TIME >= #{startOperateTime}]]>     
+	        </if>
+	        <!-- 操作时间-结束时间--> 
+	         <if test="endOperateTime != null and endOperateTime != ''">     
+	             <![CDATA[AND OPERATE_TIME <= #{endOperateTime}]]>    
+	        </if>
+       </where>
+	</select>
+</mapper>

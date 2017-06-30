@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+	default-lazy-init="true">
+
+	<description>Shiro安全配置</description>
+
+	<!-- Shiro's main business-tier object for web-enabled applications -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+		<property name="realm" ref="shiroDbRealm" />
+		<property name="cacheManager" ref="redisCacheManager"/>			<!-- cacheManager -->
+		<property name="sessionManager" ref="redisSessionManager"/>		<!-- sessionManager-->
+	</bean>
+
+	<!-- 項目自定义的Realm-->
+	<bean id="shiroDbRealm" class="com.yaoyaohao.cerp.common.security.ShiroDbRealm">
+		<!-- 因测试经常修改用户信息，会造成DB与缓存中信息不一致，故暂屏蔽
+		<property name="authenticationCachingEnabled" value="true"/>
+		 -->
+	</bean>
+	
+	<!-- Shiro Filter -->
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+		<property name="securityManager" ref="securityManager" />
+		<property name="loginUrl" value="/login" />
+		<property name="successUrl" value="/" />
+		<property name="unauthorizedUrl" value="/page/401"/>
+		<property name="filters">
+			<map>
+				<entry key="user" value-ref="userFilter"/>
+			</map>
+		</property>
+		<property name="filterChainDefinitions">
+			<value>
+				/login = anon
+				/captcha = anon
+				/assets/** = anon
+				/diagram-viewer/** = anon
+				/app/** = anon
+				/** = user
+			</value>
+		</property>
+	</bean>
+	
+	<!-- 自定义验证拦截器-->
+	<bean id="userFilter" class="com.yaoyaohao.cerp.common.security.filters.UserFilter"/>
+	 
+	<!-- 用户授权信息Cache -->
+	<bean id="redisCacheManager" class="com.yaoyaohao.cerp.common.security.cache.RedisCacheManager"/>
+	
+	<!-- 会话管理类 -->
+	<bean id="redisSessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+		<property name="sessionDAO" ref="redisSessionDAO"/>
+		<property name="sessionValidationInterval" value="1800000"/>  	<!-- 相隔多久检查一次session的有效性 -->
+    	<property name="globalSessionTimeout" value="1800000"/>  		<!-- session 有效时间为半小时 （毫秒单位）-->
+    	<property name="sessionIdCookie.name" value="jsid"/>
+    	<property name="sessionIdCookie.path" value="/"/>
+	</bean>
+	
+	<!-- 基于redis的sessionDAO实现 -->
+	<bean id="redisSessionDAO" class="com.yaoyaohao.cerp.common.security.cache.RedisSessionDAO">
+		<property name="jedisClient" ref="redisClient"/>
+		<property name="expire" value="1800"/>						<!-- 缓存中会话超时时间:半小时(秒单位) -->
+	</bean>
+	
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+	
+</beans>
