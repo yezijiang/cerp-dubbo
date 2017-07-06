@@ -1,0 +1,8 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<paramtables>
+	<table tableName="T_SYS_STAFF" primaryKeys="STAFF_ID"/>
+	<table tableName="T_SYS_STAFF_ROLE" primaryKeys="STAFF_ROLE_ID"/>
+	<table tableName="T_SYS_ROLE" primaryKeys="ROLE_ID"/>
+	<table tableName="T_SYS_ROLE_RIGHT" primaryKeys="ROLE_RIGHT_ID"/>
+	<table tableName="T_SYS_RIGHT" primaryKeys="RIGHT_ID"/>
+</paramtables>

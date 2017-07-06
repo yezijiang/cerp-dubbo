@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.matthew.cerp.common.dao.CommonDao">
+	<select id="T_SYS_STAFF" resultType="map">
+		select * from t_sys_staff
+		where 1= 1
+		<if test="staffId != null">
+		 and staff_id = #{staffId}
+		</if>
+		<if test="loginAccount != null">
+		 and login_account = #{loginAccount}
+		</if>
+		<if test="staffName != null">
+		 and staff_name = #{staffName}
+		</if>
+		<if test="organizeId != null">
+		 and organize_id = #{organizeId}
+		</if>
+	</select>
+	
+	<select id="T_SYS_STAFF_ROLE" resultType="map">
+		select * from t_sys_staff_role
+		where 1 = 1
+		<if test="staffId != null">
+		 and staff_id = #{staffId}
+		</if>
+		<if test="roleId != null">
+		 and role_id = #{roleId}
+		</if>
+	</select>
+	
+	<select id="T_SYS_ROLE" resultType="map">
+		select * from t_sys_role
+		where 1 = 1
+		<if test="roleId != null">
+		 and role_id = #{roleId}
+		</if>
+	</select>
+	
+	<select id="T_SYS_ROLE_RIGHT" resultType="map">
+		select	rr.ROLE_RIGHT_ID, 
+			rr.ROLE_ID,
+			r.RIGHT_ID,
+			r.RIGHT_TYPE,
+			r.RIGHT_NAME,
+			r.RIGHT_URL,
+			r.RIGHT_DESC,
+			r.RIGHT_CODE,
+			r.PARENT_RIGHT_ID,
+			r.ORDER_BY,
+			r.RIGHT_LEVEL,
+			r.DELETED_FLAG
+		from t_sys_role_right rr
+		inner join t_sys_right r on rr.right_id = r.right_id
+		where 1 = 1
+		<if test="roleId != null">
+		 and rr.role_id=#{roleId}
+		</if>
+		<if test="rightType != null">
+		 and r.RIGHT_TYPE = #{rightType}
+		</if>
+		<if test="deletedFlag != null">
+		 and r.DELETED_FLAG = #{deletedFlag}
+		</if>
+	</select>
+	
+	<select id="T_SYS_RIGHT" resultType="map">
+		select * from t_sys_right
+		where 1 = 1
+		<if test="rightId != null">
+		 and right_id = #{rightId}
+		</if>
+		<if test="rightType != null">
+		 and RIGHT_TYPE = #{rightType}
+		</if>
+		<if test="deletedFlag != null">
+		 and DELETED_FLAG = #{deletedFlag}
+		</if>
+	</select>
+</mapper>

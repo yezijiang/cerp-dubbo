@@ -18,7 +18,11 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
-
+/**
+ * Created with IntelliJ IDEA
+ * User: maxing
+ * TIME: 2017-06-30 14:22
+ */
 @Service
 public class SystemLogServiceImpl implements SystemLogService
 {

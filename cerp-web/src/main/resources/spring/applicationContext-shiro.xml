@@ -13,7 +13,7 @@
 	</bean>
 
 	<!-- 項目自定义的Realm-->
-	<bean id="shiroDbRealm" class="com.yaoyaohao.cerp.common.security.ShiroDbRealm">
+	<bean id="shiroDbRealm" class="com.matthew.cerp.common.security.ShiroDbRealm">
 		<!-- 因测试经常修改用户信息，会造成DB与缓存中信息不一致，故暂屏蔽
 		<property name="authenticationCachingEnabled" value="true"/>
 		 -->
@@ -43,7 +43,7 @@
 	</bean>
 	
 	<!-- 自定义验证拦截器-->
-	<bean id="userFilter" class="com.yaoyaohao.cerp.common.security.filters.UserFilter"/>
+	<bean id="userFilter" class="com.matthew.cerp.common.security.filters.UserFilter"/>
 	 
 	<!-- 用户授权信息Cache -->
 	<bean id="redisCacheManager" class="com.yaoyaohao.cerp.common.security.cache.RedisCacheManager"/>

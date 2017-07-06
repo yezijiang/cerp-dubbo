@@ -2,7 +2,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       xsi:schemaLocation="	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
        ">
     <description>公共配置</description>
@@ -13,14 +13,17 @@
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
         <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
     </context:component-scan>
+    <!-- 引入配置文件 -->
+    <context:property-placeholder location="classpath:application.properties"/>
     <!--数据源配置-->
     <import resource="applicationContext-res.xml"/>
-    <!-- 引入配置文件 -->
-    <context:property-placeholder location="classpath*:application.properties"/>
+
     <import resource="dubbo-provider.xml" />
 
-
-
-
-
+    <!--数据源配置-->
+    <!-- Redis配置 -->
+    <bean id="redisClient" class="com.yaoyaohao.framework.redis.impl.ShardedJedisClientImpl">
+        <constructor-arg name="host" value="172.16.10.1" />
+        <constructor-arg name="port" value="6379" />
+    </bean>
 </beans>
